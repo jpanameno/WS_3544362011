@@ -1,0 +1,42 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+
+namespace WS_3544362011
+{
+    /// <summary>
+    /// Summary description for Servicios
+    /// </summary>
+    [WebService(Namespace = "http://tempuri.org/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [System.ComponentModel.ToolboxItem(false)]
+    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+    // [System.Web.Script.Services.ScriptService]
+    public class Servicios : System.Web.Services.WebService
+    {
+
+        [WebMethod]
+        public string HelloWorld()
+        {
+            return "Hello World";
+        }
+
+        [WebMethod]
+        public DataSet GetConsultaMontoOrdenes(int Orden)
+        {
+            SqlConnection conn = new SqlConnection("Data Source=MRISQL;Initial Catalog=Adventureworks2014;Integrated Security=true;");
+            conn.Open();
+            SqlCommand sql = new SqlCommand("Select SUM(UnitPrice * OrderQty) AS totalFactura FROM Sales.SalesOrderHeader INNER JOIN Sales.SalesOrderDetail ON SalesOrderDetail.SalesOrderID = SalesOrderHeader.SalesOrderID where SalesOrderHeader.SalesOrderID=@order GROUP BY SalesOrderHeader.SalesOrderID", conn);
+            sql.Parameters.AddWithValue("@order", Orden);
+            SqlDataAdapter da = new SqlDataAdapter(sql);
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+
+            return ds;
+        }
+    }
+}
